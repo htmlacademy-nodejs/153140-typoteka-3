@@ -1,4 +1,4 @@
-`use strict`;
+'use strict';
 
 const {cli} = require(`./cli`);
 const {DEFAULT_COMMAND, USER_ARGV_INDEX, ExitCode} = require(`../constants`);

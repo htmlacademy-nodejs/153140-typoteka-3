@@ -1,4 +1,4 @@
-`use strict`;
+'use strict';
 
 module.exports = {
   getRandomInt: (min, max) => {
@@ -14,4 +14,4 @@ module.exports = {
 
     return someArray;
   }
-}
+};

@@ -60,20 +60,20 @@ const CATEGORIES = [
 
 const subtractDays = (date, days) => {
   const newDate = date.setDate(date.getDate() - days);
-  return (new Date(newDate).toISOString()).split('.')[0].split('T').join(' ');
-}
+  return (new Date(newDate).toISOString()).split(`.`)[0].split(`T`).join(` `);
+};
 
 const generateMocks = (count) => (
   new Array(count).fill({}).map(() => {
     const announce = shuffle(SENTENCES).slice(0, getRandomInt(1, 5));
-    const fullText = shuffle(SENTENCES.filter(item => (!announce.includes(item)) ? item : false));
+    const fullText = shuffle(SENTENCES.filter((item) => (!announce.includes(item)) ? item : false));
     return {
       title: TITLES[getRandomInt(0, TITLES.length - 1)],
       createdDate: subtractDays(new Date(), 90),
       announce: announce.join(` `),
       fullText: fullText.slice(0, getRandomInt(1, fullText.length)).join(` `),
       сategory: shuffle(CATEGORIES).slice(0, getRandomInt(1, CATEGORIES.length))
-    }
+    };
   })
 );
 
