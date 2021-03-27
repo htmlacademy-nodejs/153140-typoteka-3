@@ -1,8 +1,8 @@
 'use strict';
 
-const fs = require(`fs`).promises;
 const chalk = require(`chalk`);
-const http = require(`http`);
+const express = require(`express`);
+const fs = require(`fs`).promises;
 const {HttpCode} = require(`../../constants`);
 
 const DEFAULT_PORT = 3000;
@@ -12,47 +12,23 @@ module.exports = {
   name: `--server`,
   description: `запускает сервер`,
   async run(args) {
-    const [userPort] = args;
-    const port = Number.parseInt(userPort, 10) || DEFAULT_PORT;
-    const sendResponse = (res, statusCode, message) => {
-      const template = `
-      <!Doctype html>
-      <html lang="ru">
-      <head>
-        <title>Typoteka</title>
-      </head>
-      <body>${message}</body>
-    </html>
-      `.trim();
-      res.statusCode = statusCode;
-      res.writeHead(statusCode, {
-        'Content-Type': `text/html; charset=UTF-8`,
-      });
-      res.end(template);
-    };
-    const onClientConnect = async (req, res) => {
-      const notFoundMessage = `Not found`;
+    const [customPort] = args;
+    const port = Number.parseInt(customPort, 10) || DEFAULT_PORT;
 
-      switch (req.url) {
-        case `/`:
-          try {
-            const content = await fs.readFile(FILE_CONTENT);
-            const message = JSON.parse(content).map((post) => `<li>${post.title}</li>`).join(``);
-            sendResponse(res, HttpCode.OK, `<ul>${message}</ul>`);
-          } catch (err) {
-            sendResponse(res, HttpCode.NOT_FOUND, notFoundMessage);
-          }
-          break;
-        default:
-          sendResponse(res, HttpCode.NOT_FOUND, notFoundMessage);
-          break;
+    const app = express();
+    app.use(express.json());
+
+    app.get(`/offers`, async (req, res) => {
+      try {
+        const fileContent = await fs.readFile(FILE_CONTENT);
+        const mocks = JSON.parse(fileContent);
+        res.json(mocks);
+      } catch (err) {
+        console.error(chalk.red(err));
+        res.status(HttpCode.INTERNAL_SERVER_ERROR).send(`[]`);
       }
-    };
-    http.createServer(onClientConnect).listen(port).on(`listening`, (err) => {
-      if (err) {
-        return console.error(`Ошибка при создании сервера`, err);
-      }
-      return console.info(chalk.green(`Сервер стартовал на http://localhost:${port}`));
     });
+    app.use((req, res) => res.status(HttpCode.NOT_FOUND).send(`Not found`));
+    app.listen(port, () => console.info(chalk.green(`Сервер запущен на http://localhost:${DEFAULT_PORT}`)));
   }
 };
