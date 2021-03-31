@@ -1,0 +1,50 @@
+# Список публикаций
+GET http://localhost:3000/api/articles
+###
+# Список категорий
+GET http://localhost:3000/api/categories
+###
+# Одна публикация
+GET http://localhost:3000/api/articles/3IsB0j
+###
+# Список комментариев
+GET http://localhost:3000/api/articles/3IsB0j/comments
+###
+# Поиск
+GET http://localhost:3000/api/search?query=все
+###
+# Удаление публикацию
+DELETE http://localhost:3000/api/articles/3IsB0j
+###
+# Удаление комментария публикации
+DELETE http://localhost:3000/api/articles/3IsB0j/comments/yoh0hL
+###
+# Добавление новой публикации
+POST http://localhost:3000/api/articles
+Content-Type: application/json
+
+{
+  "category": ["Разное", "За жизнь"],
+  "title": "Прыжок с парашютом - как это было.",
+  "announce": "Я наконец решилась прыгнуть в бездну.",
+  "fullText": "Восторг, эйфория - эмоции не описать словами!"
+}
+###
+# Редактирование публикации
+PUT http://localhost:3000/api/articles/3IsB0j
+Content-Type: application/json
+
+{
+  "category": ["Разное", "Животные"],
+  "title": "Ева - британская короткошерстная кошка.",
+  "announce": "Какими по характеру могут быть британцы?",
+  "fullText": "Ева - кошка с мягким характером."
+}
+###
+# Добавление нового комментария
+POST http://localhost:3000/api/articles/3IsB0j/comments
+Content-Type: application/json
+
+{
+  "text": "Полезная вещица"
+}
