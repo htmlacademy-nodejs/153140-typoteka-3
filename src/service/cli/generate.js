@@ -61,7 +61,7 @@ module.exports = {
   description: `формирует файл mocks.json`,
   async run(args) {
     const files = [FILE_TITLES, FILE_SENTENCES, FILE_CATEGORIES, FILE_COMMENTS];
-    const requests = files.map(async (item) => await readContent(item));
+    const requests = files.map((item) => readContent(item));
     const result = await Promise.all(requests);
     const [titles, sentences, categories, comments] = result;
 
