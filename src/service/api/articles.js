@@ -6,9 +6,8 @@ const articleValidator = require(`../middlewares/articleValidator`);
 const articleExist = require(`../middlewares/articleExist`);
 const commentValidator = require(`../middlewares/commentValidator`);
 
-const route = new Router();
-
 module.exports = (app, articleService, commentsService) => {
+  const route = new Router();
   app.use(`/articles`, route);
   // GET /api/articles - возвращает список публикаций
   route.get(`/`, (req, res) => {
@@ -38,7 +37,7 @@ module.exports = (app, articleService, commentsService) => {
     return res.status(HttpCode.CREATED).json(article);
   });
   // PUT /api/articles/:articleId - редактирует определённую публикацию
-  route.put(`/:articleId`, articleValidator, (req, res) => {
+  route.put(`/:articleId`, articleValidator, articleExist(articleService), (req, res) => {
     const {articleId} = req.params;
     const article = articleService.findOne(articleId);
     const updated = articleService.update(articleId, req.body);
@@ -76,7 +75,7 @@ module.exports = (app, articleService, commentsService) => {
     const {article} = res.locals;
     const comment = commentsService.create(article, req.body);
 
-    return res.status(HttpCode.OK).json(comment);
+    return res.status(HttpCode.CREATED).json(comment);
   });
   // DELETE /api/articles/:articleId/comments/:commentId — удаляет из определённой публикации комментарий с идентификатором
   route.delete(`/:articleId/comments/:commentId`, articleExist(articleService), (req, res) => {
