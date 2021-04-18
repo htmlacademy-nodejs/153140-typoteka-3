@@ -101,7 +101,7 @@ describe(`API changes existent article`, () => {
   test(`Article is really changed`, () => request(app).get(`/articles/pCNKeL`).expect((res) => expect(res.body.title).toBe(`Ева - британская короткошерстная кошка.`)));
 });
 
-test(`API returns status code 404 when trying to change non-existent article`, () => {
+describe(`API refuses to change existent article`, () => {
   const app = createAPI();
   const validArticle = {
     category: [`Разное`, `Животные`],
@@ -109,19 +109,14 @@ test(`API returns status code 404 when trying to change non-existent article`, (
     announce: `Какими по характеру могут быть британцы?`,
     fullText: `Ева - кошка с мягким характером.`
   };
-
-  return request(app).put(`/articles/NOEXST`).send(validArticle).expect(HttpCode.NOT_FOUND);
-});
-
-test(`API returns status code 400 when trying to change an article with invalid data`, () => {
-  const app = createAPI();
   const invalidArticle = {
     title: `Ева - британская короткошерстная кошка.`,
     announce: `Какими по характеру могут быть британцы?`,
     fullText: `Ева - кошка с мягким характером.`
   };
 
-  return request(app).put(`/articles/NOEXST`).send(invalidArticle).expect(HttpCode.BAD_REQUEST);
+  test(`API returns status code 404 when trying to change non-existent article`, () => request(app).put(`/articles/NOEXST`).send(validArticle).expect(HttpCode.NOT_FOUND));
+  test(`API returns status code 400 when trying to change an article with invalid data`, () => request(app).put(`/articles/NOEXST`).send(invalidArticle).expect(HttpCode.BAD_REQUEST));
 });
 
 // DELETE /api/articles/:articleId - удаляет определённую публикацию
@@ -138,10 +133,9 @@ describe(`API correctly deletes an article`, () => {
   test(`Article count is 3 now`, () => request(app).get(`/articles`).expect((res) => expect(res.body.length).toBe(3)));
 });
 
-test(`API refuses to delete non-existent article`, () => {
+describe(`API refuses to delete an article`, () => {
   const app = createAPI();
-
-  return request(app).delete(`/articles/NOEXST`).expect(HttpCode.NOT_FOUND);
+  test(`API refuses to delete non-existent article`, () => request(app).delete(`/articles/NOEXST`).expect(HttpCode.NOT_FOUND));
 });
 
 // GET /api/articles/:articleId/comments — возвращает список комментариев определённой публикации
@@ -175,16 +169,11 @@ describe(`API creates a comment if data is valid`, () => {
   test(`Comments count is changed`, () => request(app).get(`/articles/pCNKeL/comments`).expect((res) => expect(res.body.length).toBe(5)));
 });
 
-test(`API refuses to create a comment to non-existent article and returns status code 404`, () => {
+describe(`API refuses to create a comment`, () => {
   const app = createAPI();
 
-  return request(app).post(`/articles/NOEXST/comments`).send({text: `Неважно`}).expect(HttpCode.NOT_FOUND);
-});
-
-test(`API refuses to create a comment when data is invalid, and returns status code 400`, () => {
-  const app = createAPI();
-
-  return request(app).post(`/articles/pCNKeL/comments`).send({}).expect(HttpCode.BAD_REQUEST);
+  test(`API refuses to create a comment to non-existent article and returns status code 404`, () => request(app).post(`/articles/NOEXST/comments`).send({text: `Неважно`}).expect(HttpCode.NOT_FOUND));
+  test(`API refuses to create a comment when data is invalid, and returns status code 400`, () => request(app).post(`/articles/pCNKeL/comments`).send({}).expect(HttpCode.BAD_REQUEST));
 });
 
 // DELETE /api/articles/:articleId/comments/:commentId — удаляет из определённой публикации комментарий с идентификатором
@@ -201,14 +190,9 @@ describe(`API correctly deletes a comment`, () => {
   test(`Comments count is 3 now`, () => request(app).get(`/articles/pCNKeL/comments`).expect((res) => expect(res.body.length).toBe(3)));
 });
 
-test(`API refuses to delete non-existent comment`, () => {
+describe(`API refuses to delete a comment`, () => {
   const app = createAPI();
 
-  return request(app).delete(`/articles/pCNKeL/comments/NOEXST`).expect(HttpCode.NOT_FOUND);
-});
-
-test(`API refuses to delete a comment to non-existent article`, () => {
-  const app = createAPI();
-
-  return request(app).delete(`/articles/NOEXST/comments/aS2O6s`).expect(HttpCode.NOT_FOUND);
+  test(`API refuses to delete non-existent comment`, () => request(app).delete(`/articles/pCNKeL/comments/NOEXST`).expect(HttpCode.NOT_FOUND));
+  test(`API refuses to delete a comment to non-existent article`, () => request(app).delete(`/articles/NOEXST/comments/aS2O6s`).expect(HttpCode.NOT_FOUND));
 });

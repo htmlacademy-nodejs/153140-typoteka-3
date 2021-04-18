@@ -6,7 +6,18 @@ block content
       .search-page__wrapper
         h1 Поиск
         .search.search-page__form
-          form(action='#' method='get')
+          form(action='/search' method='get')
             label
               input(type='text' name='search' placeholder='Что ищем?')
             button.search__button.button.button--transparent(type='submit') Найти
+          if results.length > 0
+            each article in results
+              .search__result
+                time.search__date(datetime=`${new Date(article.createdDate).toLocaleDateString("sv")}T${new Date(article.createdDate).toLocaleTimeString([], {timeStyle: 'short'})}`)
+                  | #{new Date(article.createdDate).toLocaleString("ru-ru", {dateStyle: 'short', timeStyle: 'short'})}
+                a.search__link(href=`/articles/${article.id}`)
+                  | #{article.title}
+          end
+        if results.length === 0
+          p.search-page__empty Ничего не нашлось
+        end
