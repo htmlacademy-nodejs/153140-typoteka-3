@@ -25,5 +25,7 @@ describe(`API returns article based on search query`, () => {
   test(`Article has correct id`, () => expect(response.body[0].id).toBe(`TsQP3g`));
 });
 
-test(`API returns code 404 if nothing is found`, () => request(app).get(`/search`).query({query: `Продам свою душу`}).expect(HttpCode.NOT_FOUND));
-test(`API returns 400 when query string is absent`, () => request(app).get(`/search`).expect(HttpCode.BAD_REQUEST));
+describe(`API refuses to return offer based on search query`, () => {
+  test(`API returns code 404 if nothing is found`, () => request(app).get(`/search`).query({query: `Продам свою душу`}).expect(HttpCode.NOT_FOUND));
+  test(`API returns 400 when query string is absent`, () => request(app).get(`/search`).expect(HttpCode.BAD_REQUEST));
+});
