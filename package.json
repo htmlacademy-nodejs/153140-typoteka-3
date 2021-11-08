@@ -7,7 +7,7 @@
     "verbose": true
   },
   "scripts": {
-    "start-front-server": "nodemon ./src/express/index.js",
+    "start-front-server": "nodemon ./src/express/express.js",
     "test": "npm run eslint && npm run test::rest",
     "eslint": "eslint --ext .js src/",
     "start": "cross-env NODE_ENV=production node ./src/service/service.js",
